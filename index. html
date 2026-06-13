@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phoenix AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav>
+    <h2>🔥 Phoenix AI</h2>
+
+    <div class="nav-right">
+      <span id="username">User</span>
+      <button onclick="clearChat()">Clear Chat</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main>
+    <div id="chatBox" class="chat-box">
+      <div class="ai-msg">
+        Hello! I am Phoenix AI. Ask me anything or upload a photo.
+      </div>
+    </div>
+
+    <div class="input-area">
+      <input type="file" id="photo" accept="image/*">
+      <textarea id="question" placeholder="Ask anything..."></textarea>
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
