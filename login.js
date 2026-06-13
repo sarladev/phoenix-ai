@@ -1,4 +1,4 @@
-async function register() {
+function register() {
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -9,41 +9,23 @@ async function register() {
     return;
   }
 
-  const res = await fetch("/api/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name, email, password })
-  });
+  localStorage.setItem("name", name);
+  localStorage.setItem("email", email);
+  localStorage.setItem("password", password);
 
-  const data = await res.json();
-  msg.innerText = data.message || data.error;
+  msg.innerText = "Demo account created. Now login.";
 }
 
-async function login() {
+function login() {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
+  const savedEmail = localStorage.getItem("email");
+  const savedPassword = localStorage.getItem("password");
   const msg = document.getElementById("msg");
 
-  if (!email || !password) {
-    msg.innerText = "Email and password required.";
-    return;
-  }
-
-  const res = await fetch("/api/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email, password })
-  });
-
-  const data = await res.json();
-
-  if (data.token) {
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("name", data.name);
+  if (email === savedEmail && password === savedPassword) {
     window.location.href = "index.html";
   } else {
-    msg.innerText = data.error;
+    msg.innerText = "Wrong email or password.";
+  }
+      }
