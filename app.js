@@ -1,40 +1,18 @@
-const token = localStorage.getItem("token");
-const username = localStorage.getItem("name") || "User";
-
-if (!token) {
-  window.location.href = "login.html";
-}
-
+const username = localStorage.getItem("name") || "Guest";
 document.getElementById("username").innerText = username;
 
 function addMessage(text, type) {
   const chatBox = document.getElementById("chatBox");
-
   const div = document.createElement("div");
   div.className = type;
   div.innerText = text;
-
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
-
   return div;
-}
-
-function saveChatToBrowser(question, answer) {
-  const oldChats = JSON.parse(localStorage.getItem("phoenixChats")) || [];
-
-  oldChats.push({
-    question,
-    answer,
-    time: new Date().toLocaleString()
-  });
-
-  localStorage.setItem("phoenixChats", JSON.stringify(oldChats));
 }
 
 function loadOldChats() {
   const chats = JSON.parse(localStorage.getItem("phoenixChats")) || [];
-
   chats.forEach(chat => {
     addMessage(chat.question, "user-msg");
     addMessage(chat.answer, "ai-msg");
@@ -50,43 +28,29 @@ async function sendMessage() {
   const question = questionBox.value.trim();
   const photo = photoInput.files[0];
 
-  if (!question && !photo) {
-    return;
-  }
+  if (!question && !photo) return;
 
   addMessage(question || "Photo uploaded", "user-msg");
 
   const thinking = addMessage("Phoenix AI is thinking...", "ai-msg thinking");
 
-  const formData = new FormData();
-  formData.append("question", question);
+  setTimeout(() => {
+    thinking.classList.remove("thinking");
+    thinking.innerText =
+      "Demo mode: GitHub Pages par backend/API nahi chalta. Full AI answer ke liye backend hosting chahiye.";
 
-  if (photo) {
-    formData.append("photo", photo);
-  }
+    const oldChats = JSON.parse(localStorage.getItem("phoenixChats")) || [];
+    oldChats.push({
+      question: question || "Photo uploaded",
+      answer: thinking.innerText,
+      time: new Date().toLocaleString()
+    });
+
+    localStorage.setItem("phoenixChats", JSON.stringify(oldChats));
+  }, 1200);
 
   questionBox.value = "";
   photoInput.value = "";
-
-  try {
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      body: formData
-    });
-
-    const data = await res.json();
-
-    thinking.classList.remove("thinking");
-    thinking.innerText = data.answer || data.error || "Something went wrong.";
-
-    saveChatToBrowser(question || "Photo uploaded", thinking.innerText);
-  } catch {
-    thinking.classList.remove("thinking");
-    thinking.innerText = "Server error. Please try again.";
-  }
 }
 
 function clearChat() {
@@ -95,8 +59,7 @@ function clearChat() {
 }
 
 function logout() {
-  localStorage.removeItem("token");
   localStorage.removeItem("name");
   localStorage.removeItem("phoenixChats");
   window.location.href = "login.html";
-  }
+}
